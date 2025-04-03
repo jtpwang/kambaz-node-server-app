@@ -20,7 +20,7 @@ const app = express();
 
 // Set CORS to allow credentials
 app.use(cors({
-  origin: process.env.NETLIFY_URL || 'http://localhost:5173', // use environment variable
+  origin: 'https://a5--tzupingwang-kambaz-react-web.netlify.app' || 'http://localhost:5173', // use environment variable
   credentials: true // allow credentials
 })); 
 
