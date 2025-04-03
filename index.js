@@ -11,14 +11,14 @@ import session from 'express-session';
 import 'dotenv/config';
 import { initializeDatabase } from "./Kambaz/Database/init.js";
 
-// 初始化資料庫
-console.log("初始化資料庫...");
+// Initialize database
+console.log("Initializing database...");
 initializeDatabase();
-console.log("資料庫初始化完成");
+console.log("Database initialization complete");
 
 const app = express();
 
-// set cors to allow credentials
+// Set CORS to allow credentials
 app.use(cors({
   origin: process.env.NETLIFY_URL || 'http://localhost:5173', // use environment variable
   credentials: true // allow credentials
@@ -26,15 +26,15 @@ app.use(cors({
 
 app.use(express.json());
 
-// set session options
+// Set session options
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || 'keyboard cat',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // in production environment, set to true
+  cookie: { secure: false } // set to true in production
 };
 
-// adjust cookie settings in production environment
+// Adjust cookie settings in production
 if (process.env.NODE_ENV !== "development") {
   sessionOptions.proxy = true;
   sessionOptions.cookie = {
@@ -44,15 +44,17 @@ if (process.env.NODE_ENV !== "development") {
   };
 }
 
-// add session middleware support
+// Add session middleware support
 app.use(session(sessionOptions));
 
+// Register routes
 UserRoutes(app);
-CourseRoutes(app);  // add course routes
-ModuleRoutes(app);  // add module routes
-AssignmentRoutes(app);  // add assignment routes
-EnrollmentRoutes(app);  // add enrollment routes
+CourseRoutes(app);        // Register course routes
+ModuleRoutes(app);        // Register module routes
+AssignmentRoutes(app);    // Register assignment routes
+EnrollmentRoutes(app);    // Register enrollment routes
 Lab5(app);
 Hello(app);
 
+// Start server
 app.listen(process.env.PORT || 4000);

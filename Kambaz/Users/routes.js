@@ -107,43 +107,43 @@ export default function UserRoutes(app) {
     const createCourse = (req, res) => {
         const currentUser = req.session["currentUser"];
         
-        // 檢查用戶是否已登入
+        // Check if user is logged in
         if (!currentUser) {
-            return res.status(401).json({ message: "您需要登入才能創建課程" });
+            return res.status(401).json({ message: "You must be logged in to create a course" });
         }
         
-        // 檢查用戶角色是否為教師
+        // Check if user is a faculty member
         if (currentUser.role !== "FACULTY") {
-            console.log(`用戶 ${currentUser.username} (角色: ${currentUser.role}) 嘗試創建課程，但被拒絕`);
-            return res.status(403).json({ message: "只有教師可以創建課程" });
+            console.log(`User ${currentUser.username} (role: ${currentUser.role}) attempted to create a course but was denied`);
+            return res.status(403).json({ message: "Only faculty members can create courses" });
         }
         
-        console.log(`教師 ${currentUser.username} 正在創建新課程:`, req.body);
+        console.log(`Faculty ${currentUser.username} is creating a new course:`, req.body);
         const newCourse = courseDao.createCourse(req.body);
         enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
-        console.log(`成功創建課程:`, newCourse);
+        console.log("Successfully created course:", newCourse);
         res.json(newCourse);
     };
 
     const findUsersEnrolledInCourse = (req, res) => {
         try {
             const courseId = req.params.courseId;
-            console.log(`正在查詢課程 ${courseId} 的成員`);
+            console.log(`Searching for users enrolled in course ${courseId}`);
             
-            // 獲取課程的所有註冊信息
+            // Get all enrollment records for the course
             const enrollmentsInCourse = enrollmentsDao.findEnrollmentsForCourse(courseId);
-            console.log(`找到 ${enrollmentsInCourse.length} 個註冊記錄`);
+            console.log(`Found ${enrollmentsInCourse.length} enrollment records`);
             
-            // 直接從註冊記錄中提取用戶對象（而不是 ID）
+            // Extract user objects directly from enrollments
             const users = enrollmentsInCourse.map(enrollment => enrollment.user);
             
-            console.log(`成功提取 ${users.length} 個用戶信息`);
+            console.log(`Successfully extracted ${users.length} user records`);
             
-            // 返回用戶列表
+            // Return the user list
             res.json(users);
         } catch (error) {
-            console.error(`獲取課程用戶時出錯:`, error);
-            res.status(500).json({ message: "獲取課程用戶時出錯" });
+            console.error("Error fetching users for course:", error);
+            res.status(500).json({ message: "Error fetching users for course" });
         }
     };
 

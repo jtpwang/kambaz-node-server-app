@@ -3,11 +3,12 @@ import * as modulesDao from "../Modules/dao.js";
 
 export default function CourseRoutes(app) {
     app.get("/api/courses", (req, res) => {
-        console.log("收到獲取所有課程的請求");
+        console.log("Received request to fetch all courses");
         const courses = dao.findAllCourses();
-        console.log(`返回 ${courses.length} 門課程:`, courses);
+        console.log(`Returning ${courses.length} courses:`, courses);
         res.send(courses);
     });
+
     app.delete("/api/courses/:courseId", (req, res) => {
         const { courseId } = req.params;
         const status = dao.deleteCourse(courseId);
@@ -17,31 +18,33 @@ export default function CourseRoutes(app) {
     app.put("/api/courses/:courseId", (req, res) => {
         const { courseId } = req.params;
         const courseUpdates = req.body;
-        
-        // 獲取當前用戶
+
+        // Get current user
         const currentUser = req.session["currentUser"];
-        
-        // 檢查用戶是否已登入
+
+        // Check if user is logged in
         if (!currentUser) {
-            return res.status(401).json({ message: "您需要登入才能更新課程" });
+            return res.status(401).json({ message: "You must be logged in to update a course" });
         }
-        
-        // 檢查用戶角色是否為教師
+
+        // Check if user role is FACULTY
         if (currentUser.role !== "FACULTY") {
-            console.log(`用戶 ${currentUser.username} (角色: ${currentUser.role}) 嘗試更新課程，但被拒絕`);
-            return res.status(403).json({ message: "只有教師可以更新課程" });
+            console.log(`User ${currentUser.username} (role: ${currentUser.role}) attempted to update course but was denied`);
+            return res.status(403).json({ message: "Only faculty members can update courses" });
         }
-        
-        console.log(`教師 ${currentUser.username} 正在更新課程 ${courseId}:`, courseUpdates);
+
+        console.log(`Faculty ${currentUser.username} is updating course ${courseId}:`, courseUpdates);
         const status = dao.updateCourse(courseId, courseUpdates);
-        console.log(`成功更新課程:`, status);
+        console.log("Course successfully updated:", status);
         res.send(status);
     });
+
     app.get("/api/courses/:courseId/modules", (req, res) => {
         const { courseId } = req.params;
         const modules = modulesDao.findModulesForCourse(courseId);
         res.json(modules);
     });
+
     app.post("/api/courses/:courseId/modules", (req, res) => {
         const { courseId } = req.params;
         const module = {
@@ -51,6 +54,4 @@ export default function CourseRoutes(app) {
         const newModule = modulesDao.createModule(module);
         res.send(newModule);
     });
-
-
 }
