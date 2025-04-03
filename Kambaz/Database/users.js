@@ -1,4 +1,32 @@
-export default[
+export default [
+    {
+        "_id": "999",
+        "username": "alice",
+        "password": "alice123",
+        "firstName": "Alice",
+        "lastName": "Chen",
+        "email": "alice@example.com",
+        "dob": "1980-01-01",
+        "role": "FACULTY",
+        "loginId": "001234570F",
+        "section": "S101",
+        "lastActivity": "2023-04-01",
+        "totalActivity": "05:20:15"
+    },
+    {
+        "_id": "998",
+        "username": "bob",
+        "password": "bob123",
+        "firstName": "Bob",
+        "lastName": "Smith",
+        "email": "bob@example.com",
+        "dob": "1995-05-15",
+        "role": "STUDENT",
+        "loginId": "001234571S",
+        "section": "S101",
+        "lastActivity": "2023-04-01",
+        "totalActivity": "03:45:30"
+    },
     {
         "_id": "123",
         "username": "iron_man",
